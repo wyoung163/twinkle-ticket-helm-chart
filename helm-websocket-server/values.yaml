@@ -74,13 +74,17 @@ service:
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-    # kubernetes.io/ingress.class: alb
-    # alb.ingress.kubernetes.io/scheme: internet-facing
-    # alb.ingress.kubernetes.io/target-type: ip
+  className: "alb"
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/subnets:
+      { { - $subnets := lookup "v1" "Secret" "default" "websocket-server-secrets" } }
+      { { - if $subnets } }
+      { { - $subnets.data.ALB_SUBNETS | b64dec } }
+      { { - else } }
+      ""
+      { { - end } }
   hosts:
     - host: websocket-websocket-server.back.svc.cluster.local
       paths:

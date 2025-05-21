@@ -76,17 +76,19 @@ service:
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
-  enabled: true
+  enabled: false
   className: "alb"
   annotations: 
-    #alb.ingress.kubernetes.io/load-balancer-name: "prod-eks-alb"
+    alb.ingress.kubernetes.io/load-balancer-name: "prod-eks-alb"
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets: ""
-      valueFrom: 
-          secretKeyRef:
-            name: kafka-consumer-secrets
-            key: ALB_SUBNETS
+    alb.ingress.kubernetes.io/subnets:
+      { { - $subnets := lookup "v1" "Secret" "default" "kafka-consumer-secrets" } }
+      { { - if $subnets } }
+      { { - $subnets.data.ALB_SUBNETS | b64dec } }
+      { { - else } }
+      ""
+      { { - end } }
   hosts:
     - host: kafka-consumer.back.svc.cluster.local
       paths:
