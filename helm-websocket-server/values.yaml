@@ -78,13 +78,13 @@ ingress:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets:
-      { { - $subnets := lookup "v1" "Secret" "default" "websocket-server-secrets" } }
-      { { - if $subnets } }
-      { { - $subnets.data.ALB_SUBNETS | b64dec } }
-      { { - else } }
+    alb.ingress.kubernetes.io/subnets: |
+      {{ - $subnets := lookup "v1" "Secret" "default" "websocket-server-secrets" }}
+      {{ - if $subnets }}
+      {{ - $subnets.data.ALB_SUBNETS | b64dec }}
+      {{ - else }}
       ""
-      { { - end } }
+      {{ - end }}
   hosts:
     - host: websocket-websocket-server.back.svc.cluster.local
       paths:

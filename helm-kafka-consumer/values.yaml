@@ -82,13 +82,13 @@ ingress:
     alb.ingress.kubernetes.io/load-balancer-name: "prod-eks-alb"
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/subnets:
-      { { - $subnets := lookup "v1" "Secret" "default" "kafka-consumer-secrets" } }
-      { { - if $subnets } }
-      { { - $subnets.data.ALB_SUBNETS | b64dec } }
-      { { - else } }
+    alb.ingress.kubernetes.io/subnets: |
+      {{ - $subnets := lookup "v1" "Secret" "default" "kafka-consumer-secrets" }}
+      {{ - if $subnets }}
+      {{ - $subnets.data.ALB_SUBNETS | b64dec }}
+      {{ - else }}
       ""
-      { { - end } }
+      {{ - end }}
   hosts:
     - host: kafka-consumer.back.svc.cluster.local
       paths:
