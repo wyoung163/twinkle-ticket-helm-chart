@@ -1,0 +1,9 @@
+dependencies:
+- name: kafka
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 32.2.8
+- name: redis
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 21.1.6
+digest: sha256:cc642448ea67c88829e6c8b691ac7878ff110bf8a594c95cd0f57584976c0561
+generated: "2025-05-23T21:27:51.3745731+09:00"
